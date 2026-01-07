@@ -75,12 +75,12 @@ if uploaded_file is not None:
     
     with col1:
         st.subheader("Your Photo")
-        st.image(original_image, use_container_width=True)
+        st.image(original_image, use_column_width=True)
         
     with col2:
         st.subheader("The Sketch Guide")
         sketch_img = generate_sketch(original_image)
-        st.image(sketch_img, use_container_width=True)
+        st.image(sketch_img, use_column_width=True)
 
     # --- 4. AI COACHING SECTION ---
     st.divider()
