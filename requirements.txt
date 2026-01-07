@@ -9,3 +9,5 @@ python-dotenv==1.0.1
 supabase==2.25.1
 streamlit-mic-recorder
 opencv-python-headless 
+langchain-openai
+
