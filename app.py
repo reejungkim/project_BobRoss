@@ -6,6 +6,8 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 import base64
 import io
+import os 
+from dotenv import load_dotenv
 
 # --- 1. CONFIGURATION & UI SETUP ---
 st.set_page_config(page_title="Cilantrosso Sketch Tutor", layout="wide")
@@ -16,10 +18,12 @@ st.markdown("""
     Upload a photo, and I'll help you break it down into a beautiful sketch.
 """)
 
-# Sidebar for API Key (Keeping it flexible like your speaking-ai app)
-with st.sidebar:
-    openai_api_key = st.text_input("OpenAI API Key", type="password")
-    st.info("This app uses GPT-4o to analyze your photo and guide you.")
+# # Sidebar for API Key (Keeping it flexible like your speaking-ai app)
+# with st.sidebar:
+#     openai_api_key = st.text_input("OpenAI API Key", type="password")
+#     st.info("This app uses GPT-4o to analyze your photo and guide you.")
+load_dotenv('/Users/reejungkim/Documents/00_Git/00_working-in-progress/.env')
+openai_api_key = os.getenv("openai")
 
 # --- 2. IMAGE PROCESSING FUNCTIONS ---
 def generate_sketch(image):
