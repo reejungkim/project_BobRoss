@@ -42,6 +42,8 @@ def generate_sketch(image):
     sketch = cv2.bitwise_not(edges)
     return sketch
 
+
+
 def get_bob_ross_advice(image, api_key):
     if not api_key:
         return "Please provide an API key to hear from the coach!"
