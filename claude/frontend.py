@@ -241,6 +241,6 @@ if 'tutorial' in st.session_state:
 st.markdown("---")
 st.markdown("""
     <div style='text-align: center; color: #888;'>
-        <p>Made with ❤️ using Claude Sonnet 4 | Powered by AI Vision & Edge Detection</p>
+        <p>Made with ❤️ </p>
     </div>
 """, unsafe_allow_html=True)
