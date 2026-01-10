@@ -72,7 +72,7 @@ def display_base64_image(base64_str, caption=""):
     try:
         image_bytes = base64.b64decode(base64_str)
         image = Image.open(io.BytesIO(image_bytes))
-        st.image(image, caption=caption, use_container_width=True)
+        st.image(image, caption=caption, use_column_width=True)
     except Exception as e:
         st.error(f"Error displaying image: {str(e)}")
 
@@ -121,7 +121,7 @@ if uploaded_file is not None:
     with col1:
         st.subheader("📸 Original Image")
         image = Image.open(uploaded_file)
-        st.image(image, use_container_width=True)
+        st.image(image, use_column_width=True)
     
     with col2:
         st.subheader("🔍 Quick Preview")
@@ -227,7 +227,7 @@ if 'tutorial' in st.session_state:
     st.markdown("---")
     st.header("💾 Save Your Tutorial")
     
-    if st.button("📥 Download Tutorial as JSON", use_container_width=True):
+    if st.button("📥 Download Tutorial as JSON", use_column_width=True):
         import json
         tutorial_json = json.dumps(tutorial, indent=2)
         st.download_button(
