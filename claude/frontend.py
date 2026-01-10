@@ -128,10 +128,23 @@ if uploaded_file is not None:
         st.info("Your image will be analyzed to create a step-by-step drawing guide tailored for beginners.")
     
     # Analyze button
-    if st.button("🎨 Generate Drawing Tutorial", type="primary", use_container_width=True):
+    if st.button("🎨 Generate Drawing Tutorial", type="primary"):
         with st.spinner("🤖 AI is analyzing your image and creating a personalized tutorial..."):
             # Convert image to bytes
             img_byte_arr = io.BytesIO()
+            
+            # Convert RGBA to RGB if needed (for PNG with transparency)
+            if image.mode in ('RGBA', 'LA', 'P'):
+                # Create a white background
+                background = Image.new('RGB', image.size, (255, 255, 255))
+                if image.mode == 'P':
+                    image = image.convert('RGBA')
+                # Paste the image on white background
+                background.paste(image, mask=image.split()[-1] if image.mode == 'RGBA' else None)
+                image = background
+            elif image.mode != 'RGB':
+                image = image.convert('RGB')
+            
             image.save(img_byte_arr, format='JPEG')
             img_byte_arr.seek(0)
             
@@ -227,7 +240,7 @@ if 'tutorial' in st.session_state:
     st.markdown("---")
     st.header("💾 Save Your Tutorial")
     
-    if st.button("📥 Download Tutorial as JSON", use_column_width=True):
+    if st.button("📥 Download Tutorial as JSON"):
         import json
         tutorial_json = json.dumps(tutorial, indent=2)
         st.download_button(
@@ -241,6 +254,6 @@ if 'tutorial' in st.session_state:
 st.markdown("---")
 st.markdown("""
     <div style='text-align: center; color: #888;'>
-        <p>Made with ❤️ </p>
+        <p>Made with ❤️ using Claude Sonnet 4 | Powered by AI Vision & Edge Detection</p>
     </div>
 """, unsafe_allow_html=True)
