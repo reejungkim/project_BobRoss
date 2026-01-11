@@ -236,24 +236,24 @@ if 'tutorial' in st.session_state:
                 if key in tutorial['processed_images']:
                     display_base64_image(tutorial['processed_images'][key], name)
     
-    # Download section
-    st.markdown("---")
-    st.header("💾 Save Your Tutorial")
+    # # Download section
+    # st.markdown("---")
+    # st.header("💾 Save Your Tutorial")
     
-    if st.button("📥 Download Tutorial as JSON"):
-        import json
-        tutorial_json = json.dumps(tutorial, indent=2)
-        st.download_button(
-            label="Download JSON",
-            data=tutorial_json,
-            file_name="drawing_tutorial.json",
-            mime="application/json"
-        )
+    # if st.button("📥 Download Tutorial as JSON"):
+    #     import json
+    #     tutorial_json = json.dumps(tutorial, indent=2)
+    #     st.download_button(
+    #         label="Download JSON",
+    #         data=tutorial_json,
+    #         file_name="drawing_tutorial.json",
+    #         mime="application/json"
+    #     )
 
 # Footer
 st.markdown("---")
 st.markdown("""
     <div style='text-align: center; color: #888;'>
-        <p>Made with ❤️ using Claude Sonnet 4 | Powered by AI Vision & Edge Detection</p>
+        <p>Made with ❤️ </p>
     </div>
 """, unsafe_allow_html=True)

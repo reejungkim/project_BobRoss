@@ -15,6 +15,10 @@ from io import BytesIO
 from PIL import Image
 import json
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = FastAPI(title="AI Sketching Tutor")
 
@@ -28,7 +32,12 @@ app.add_middleware(
 )
 
 # Initialize Anthropic client
-client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+api_key = os.getenv("ANTHROPIC_API_KEY")
+if not api_key:
+    raise ValueError("ANTHROPIC_API_KEY environment variable is not set! Please set it using: export ANTHROPIC_API_KEY='your-key'")
+
+print(f"✅ API Key loaded: {api_key[:20]}...")
+client = anthropic.Anthropic(api_key=api_key)
 
 # Response Models
 class DrawingStep(BaseModel):
