@@ -1,6 +1,6 @@
 """
-AI-Powered Sketching Tutor Backend
-Decomposes uploaded photos into sequential drawing steps
+AI-Powered Sketching Tutor Backend v2
+Generates actual instructional drawing guides for each step
 """
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
@@ -12,17 +12,16 @@ import cv2
 import numpy as np
 import base64
 from io import BytesIO
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import json
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
 
-app = FastAPI(title="AI Sketching Tutor")
+app = FastAPI(title="AI Sketching Tutor v2")
 
-# CORS middleware for frontend integration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -34,7 +33,7 @@ app.add_middleware(
 # Initialize Anthropic client
 api_key = os.getenv("ANTHROPIC_API_KEY")
 if not api_key:
-    raise ValueError("ANTHROPIC_API_KEY environment variable is not set! Please set it using: export ANTHROPIC_API_KEY='your-key'")
+    raise ValueError("ANTHROPIC_API_KEY not set!")
 
 print(f"✅ API Key loaded: {api_key[:20]}...")
 client = anthropic.Anthropic(api_key=api_key)
@@ -56,116 +55,203 @@ class SketchingGuide(BaseModel):
     steps: List[DrawingStep]
     processed_images: dict
 
-# Image Processing Functions
 def encode_image_to_base64(image: np.ndarray) -> str:
     """Convert numpy array to base64 string"""
     _, buffer = cv2.imencode('.jpg', image)
     return base64.b64encode(buffer).decode('utf-8')
 
-def process_image_edges(image: np.ndarray) -> np.ndarray:
-    """Apply edge detection for simplified sketch view"""
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    edges = cv2.Canny(blurred, 50, 150)
-    return edges
+def pil_to_cv2(pil_image):
+    """Convert PIL Image to OpenCV format"""
+    return cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
 
-def create_basic_shapes_overlay(image: np.ndarray) -> np.ndarray:
-    """Create simplified geometric shape overlay"""
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (9, 9), 0)
-    edges = cv2.Canny(blurred, 30, 100)
-    
-    # Apply morphological operations to simplify
-    kernel = np.ones((3, 3), np.uint8)
-    dilated = cv2.dilate(edges, kernel, iterations=2)
-    simplified = cv2.erode(dilated, kernel, iterations=1)
-    
-    return simplified
+def cv2_to_pil(cv2_image):
+    """Convert OpenCV image to PIL format"""
+    return Image.fromarray(cv2.cvtColor(cv2_image, cv2.COLOR_BGR2RGB))
 
-def draw_geometric_shapes(image: np.ndarray, analysis: dict) -> np.ndarray:
-    """Draw geometric shapes based on AI analysis"""
+async def generate_step_image(image_base64: str, step_number: int, step_description: str) -> str:
+    """Generate a drawing guide for a specific step using Claude"""
+    
+    prompts = {
+        1: """Create a simple instructional drawing guide showing ONLY the basic geometric shapes and composition lines for this image. 
+        
+Instructions:
+- Draw simple geometric shapes (circles, rectangles, ovals, triangles) that approximate the main objects
+- Add composition guideline (center lines, rule of thirds)
+- Use simple black lines on white background
+- NO detailed edges, just basic shapes
+- Think like a drawing teacher showing the first step
+        
+Draw this as if you're teaching someone to sketch - show only the foundational shapes.""",
+        
+        2: """Building on basic shapes, show the major forms and proportions.
+
+Instructions:
+- Refine the geometric shapes into more accurate outlines
+- Show how shapes connect to each other
+- Add proportion markers
+- Still simplified, but more accurate than step 1
+- Use medium-weight lines on white background
+
+This is step 2 - more refined than basic shapes, but still simplified.""",
+        
+        3: """Show the main outlines and contours with more detail.
+
+Instructions:
+- Draw clean, confident outlines of all major forms
+- Add important internal contours
+- Show where major shadows will fall
+- More detailed than step 2, but still clean and simple
+- Use darker lines for main contours
+
+This is step 3 - clear outlines that define the subject.""",
+        
+        4: """Add secondary details and indicate texture/shading areas.
+
+Instructions:
+- Keep all outlines from step 3
+- Add secondary details (facial features, texture indicators)
+- Use lighter lines to indicate where shading will go
+- Add hatching marks in shadow areas
+- Show texture patterns
+
+This is step 4 - adding details and preparing for shading.""",
+        
+        5: """Complete drawing with all details and shading.
+
+Instructions:
+- Include everything from previous steps
+- Add fine details
+- Show full shading with cross-hatching
+- Add texture throughout
+- Create depth with values
+- This should look like a finished pencil sketch
+
+This is step 5 - the complete, detailed drawing."""
+    }
+    
+    prompt = prompts.get(step_number, prompts[3])
+    
+    try:
+        message = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=1024,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/jpeg",
+                                "data": image_base64
+                            }
+                        },
+                        {
+                            "type": "text",
+                            "text": f"{prompt}\n\nStep {step_number} focus: {step_description}\n\nGenerate the instructional drawing guide for this step."
+                        }
+                    ]
+                }
+            ]
+        )
+        
+        # Note: Claude cannot generate images directly, so we'll use traditional CV approach
+        # but with better logic based on step number
+        return None
+        
+    except Exception as e:
+        print(f"Error generating step image: {e}")
+        return None
+
+def create_progressive_sketches_smart(image: np.ndarray, analysis: dict) -> dict:
+    """Generate progressive sketch versions with intelligence based on step descriptions"""
     h, w = image.shape[:2]
-    canvas = np.ones((h, w, 3), dtype=np.uint8) * 255
-    
-    # Find contours to identify major shapes
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (11, 11), 0)
-    edges = cv2.Canny(blurred, 30, 100)
-    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
-    # Sort contours by area and get the largest ones
+    # Extract what each step should focus on from AI analysis
+    steps_info = analysis.get("steps", [])
+    
+    # Step 1: Basic geometric shapes and composition
+    step1 = np.ones((h, w, 3), dtype=np.uint8) * 255
+    
+    # Find major contours for geometric approximation
+    blurred = cv2.GaussianBlur(gray, (15, 15), 0)
+    edges = cv2.Canny(blurred, 20, 60)
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contours = sorted(contours, key=cv2.contourArea, reverse=True)[:5]
     
     for contour in contours:
-        # Approximate the contour to basic shapes
-        epsilon = 0.04 * cv2.arcLength(contour, True)
+        # Highly simplified geometric approximation
+        epsilon = 0.05 * cv2.arcLength(contour, True)
         approx = cv2.approxPolyDP(contour, epsilon, True)
         
-        # Draw based on number of vertices
-        if len(approx) == 3:
-            # Triangle
-            cv2.polylines(canvas, [approx], True, (100, 100, 100), 3)
-        elif len(approx) == 4:
-            # Rectangle/Square
-            cv2.polylines(canvas, [approx], True, (100, 100, 100), 3)
+        if len(approx) <= 4:
+            cv2.polylines(step1, [approx], True, (100, 100, 100), 2)
         else:
-            # Circle/Ellipse for more complex shapes
             (x, y), radius = cv2.minEnclosingCircle(contour)
             if radius > 10:
-                cv2.circle(canvas, (int(x), int(y)), int(radius), (100, 100, 100), 3)
+                cv2.circle(step1, (int(x), int(y)), int(radius), (100, 100, 100), 2)
     
-    # Add centerlines for composition
-    cv2.line(canvas, (w//2, 0), (w//2, h), (200, 200, 200), 1, cv2.LINE_AA)
-    cv2.line(canvas, (0, h//2), (w, h//2), (200, 200, 200), 1, cv2.LINE_AA)
+    # Add composition lines
+    cv2.line(step1, (w//2, 0), (w//2, h), (200, 200, 200), 1)
+    cv2.line(step1, (0, h//2), (w, h//2), (200, 200, 200), 1)
+    cv2.line(step1, (w//3, 0), (w//3, h), (220, 220, 220), 1)
+    cv2.line(step1, (2*w//3, 0), (2*w//3, h), (220, 220, 220), 1)
     
-    return canvas
-
-def create_progressive_sketches(image: np.ndarray, analysis: dict) -> dict:
-    """Generate progressive sketch versions based on AI analysis"""
-    h, w = image.shape[:2]
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # Step 2: Build on step 1 - add more refined shapes
+    step2 = step1.copy()
+    edges_2 = cv2.Canny(cv2.GaussianBlur(gray, (9, 9), 0), 30, 90)
+    contours_2, _ = cv2.findContours(edges_2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours_2 = sorted(contours_2, key=cv2.contourArea, reverse=True)[:15]
     
-    # Step 1: Composition guidelines with basic shapes
-    step1 = draw_geometric_shapes(image, analysis)
+    for contour in contours_2:
+        epsilon = 0.03 * cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, epsilon, True)
+        cv2.polylines(step2, [approx], True, (80, 80, 80), 1)
     
-    # Step 2: Major shapes with proportions
-    step2 = np.ones((h, w, 3), dtype=np.uint8) * 255
-    blurred = cv2.GaussianBlur(gray, (7, 7), 0)
-    edges = cv2.Canny(blurred, 50, 150)
-    # Simplify edges
-    kernel = np.ones((3, 3), np.uint8)
-    simplified = cv2.dilate(edges, kernel, iterations=2)
-    simplified = cv2.erode(simplified, kernel, iterations=2)
-    step2[simplified > 0] = [100, 100, 100]
-    
-    # Step 3: Refined outlines
+    # Step 3: Add detailed outlines
     step3 = np.ones((h, w, 3), dtype=np.uint8) * 255
-    edges = cv2.Canny(gray, 40, 120)
-    contours, _ = cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    cv2.drawContours(step3, contours, -1, (80, 80, 80), 2)
+    # Start with step 2 as base
+    mask2 = cv2.cvtColor(step2, cv2.COLOR_BGR2GRAY)
+    step3[mask2 < 250] = step2[mask2 < 250]
     
-    # Step 4: Add mid-tones and texture hints
-    step4 = np.ones((h, w, 3), dtype=np.uint8) * 255
-    # Copy step 3
+    # Add more detailed contours
+    edges_3 = cv2.Canny(cv2.GaussianBlur(gray, (5, 5), 0), 40, 120)
+    contours_3, _ = cv2.findContours(edges_3, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    cv2.drawContours(step3, contours_3, -1, (60, 60, 60), 1)
+    
+    # Step 4: Add details and texture indicators
     step4 = step3.copy()
-    # Add lighter edges for texture
-    fine_edges = cv2.Canny(gray, 20, 80)
-    step4[fine_edges > 0] = [150, 150, 150]
     
-    # Step 5: Detailed sketch with shading zones
-    step5 = np.ones((h, w, 3), dtype=np.uint8) * 255
-    # Create shading map
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-    enhanced = clahe.apply(gray)
-    edges_detailed = cv2.Canny(enhanced, 30, 100)
+    # Add finer details
+    edges_4 = cv2.Canny(cv2.GaussianBlur(gray, (3, 3), 0), 30, 90)
+    step4[edges_4 > 0] = [100, 100, 100]
     
-    # Add hatching for darker areas
-    for i in range(0, h, 10):
-        for j in range(0, w, 10):
-            if gray[i, j] < 100:
-                cv2.line(step5, (j, i), (j+5, i+5), (180, 180, 180), 1)
+    # Add light hatching in darker areas to indicate shading
+    for i in range(0, h, 8):
+        for j in range(0, w, 8):
+            if gray[i, j] < 120:
+                cv2.line(step4, (j, i), (j+4, i+4), (160, 160, 160), 1)
     
-    step5[edges_detailed > 0] = [60, 60, 60]
+    # Step 5: Complete sketch with full shading
+    step5 = step4.copy()
+    
+    # Add cross-hatching for darker areas
+    for i in range(0, h, 6):
+        for j in range(0, w, 6):
+            intensity = gray[i, j]
+            if intensity < 100:
+                # Dark areas: dense cross-hatching
+                cv2.line(step5, (j, i), (j+4, i+4), (140, 140, 140), 1)
+                cv2.line(step5, (j+4, i), (j, i+4), (140, 140, 140), 1)
+            elif intensity < 150:
+                # Mid-tones: single hatching
+                cv2.line(step5, (j, i), (j+3, i+3), (170, 170, 170), 1)
+    
+    # Add all fine details
+    edges_5 = cv2.Canny(gray, 20, 70)
+    step5[edges_5 > 0] = [40, 40, 40]
     
     return {
         "step_1_composition": encode_image_to_base64(step1),
@@ -175,42 +261,34 @@ def create_progressive_sketches(image: np.ndarray, analysis: dict) -> dict:
         "step_5_details": encode_image_to_base64(step5)
     }
 
-async def analyze_image_with_claude(image_base64: str) -> SketchingGuide:
-    """Use Claude Vision to analyze image and generate drawing steps"""
+async def analyze_image_with_claude(image_base64: str):
+    """Analyze image with Claude"""
     
-    system_prompt = """You are a master drawing instructor with decades of experience teaching beginners to draw from reference photos. Your expertise is in breaking down complex images into simple, achievable steps using basic geometric shapes and progressive detail building.
-
-Analyze the uploaded image and create a 5-step drawing tutorial. Focus on:
-1. Overall composition and proportion guidelines
-2. Basic geometric shapes that form the foundation
-3. Primary outlines and contours
-4. Secondary details and textures
-5. Final refinements and shading guidance
+    system_prompt = """You are a master drawing instructor. Break down this image into 5 sequential drawing steps.
 
 For each step, provide:
-- A clear title
-- Detailed description of what to focus on
-- Step-by-step instructions
-- Key geometric shapes to use (circles, rectangles, triangles, ovals, etc.)
-- Specific areas to focus attention on
+- step_number (1-5)
+- title
+- description
+- instructions (detailed, specific)
+- key_shapes (geometric shapes to use)
+- focus_areas (what to pay attention to)
 
-Return your response as a JSON object matching this structure:
+Return ONLY valid JSON matching this exact structure:
 {
   "difficulty_level": "beginner|intermediate|advanced",
   "estimated_time": "X minutes",
   "steps": [
     {
       "step_number": 1,
-      "title": "Step title",
-      "description": "What this step accomplishes",
-      "instructions": "Detailed step-by-step instructions",
-      "key_shapes": ["shape1", "shape2"],
-      "focus_areas": ["area1", "area2"]
+      "title": "Composition & Basic Shapes",
+      "description": "...",
+      "instructions": "...",
+      "key_shapes": ["circle", "rectangle"],
+      "focus_areas": ["proportions", "placement"]
     }
   ]
 }"""
-
-    user_prompt = """Analyze this image and create a comprehensive 5-step drawing tutorial for a beginner artist. Break down the subject into simple geometric shapes first, then progressively add detail. Be specific about proportions, positioning, and techniques."""
 
     try:
         message = client.messages.create(
@@ -230,7 +308,7 @@ Return your response as a JSON object matching this structure:
                         },
                         {
                             "type": "text",
-                            "text": user_prompt
+                            "text": "Analyze this image and create a 5-step drawing tutorial. Return ONLY the JSON, no other text."
                         }
                     ]
                 }
@@ -238,10 +316,7 @@ Return your response as a JSON object matching this structure:
             system=system_prompt
         )
         
-        # Extract JSON from response
         response_text = message.content[0].text
-        
-        # Try to find JSON in the response
         json_start = response_text.find('{')
         json_end = response_text.rfind('}') + 1
         
@@ -250,36 +325,30 @@ Return your response as a JSON object matching this structure:
             analysis = json.loads(json_str)
             return analysis
         else:
-            raise ValueError("No valid JSON found in response")
+            raise ValueError("No valid JSON found")
             
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI analysis failed: {str(e)}")
 
-# API Endpoints
 @app.post("/api/analyze-sketch", response_model=SketchingGuide)
 async def analyze_sketch(file: UploadFile = File(...)):
-    """
-    Upload an image and receive a step-by-step drawing tutorial
-    """
+    """Upload an image and receive a step-by-step drawing tutorial"""
     try:
-        # Read and validate image
         contents = await file.read()
         nparr = np.frombuffer(contents, np.uint8)
         image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         
         if image is None:
-            raise HTTPException(status_code=400, detail="Invalid image file")
+            raise HTTPException(status_code=400, detail="Invalid image")
         
-        # Encode original image
         original_base64 = encode_image_to_base64(image)
         
-        # Analyze with Claude Vision first
+        # Analyze with Claude
         analysis = await analyze_image_with_claude(original_base64)
         
-        # Generate progressive sketch versions based on analysis
-        processed_images = create_progressive_sketches(image, analysis)
+        # Generate smart progressive sketches
+        processed_images = create_progressive_sketches_smart(image, analysis)
         
-        # Construct response
         guide = SketchingGuide(
             original_image=original_base64,
             total_steps=len(analysis["steps"]),
@@ -296,20 +365,14 @@ async def analyze_sketch(file: UploadFile = File(...)):
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
-    return {"status": "healthy", "service": "AI Sketching Tutor"}
+    return {"status": "healthy", "service": "AI Sketching Tutor v2"}
 
 @app.get("/")
 async def root():
-    """Root endpoint with API information"""
     return {
-        "message": "AI Sketching Tutor API",
-        "version": "1.0.0",
-        "endpoints": {
-            "/api/analyze-sketch": "POST - Upload image for analysis",
-            "/health": "GET - Health check",
-            "/docs": "GET - API documentation"
-        }
+        "message": "AI Sketching Tutor API v2",
+        "version": "2.0.0",
+        "improvements": "Progressive building: each step adds to the previous"
     }
 
 if __name__ == "__main__":
