@@ -47,6 +47,7 @@ class DrawingStep(BaseModel):
     instructions: str
     key_shapes: List[str]
     focus_areas: List[str]
+    step_image: str  # Base64 encoded image matching this step's description
 
 class SketchingGuide(BaseModel):
     original_image: str
@@ -82,32 +83,97 @@ def create_basic_shapes_overlay(image: np.ndarray) -> np.ndarray:
     
     return simplified
 
-def create_progressive_sketches(image: np.ndarray) -> dict:
-    """Generate progressive sketch versions"""
-    # Step 1: Basic composition lines
+def draw_geometric_shapes(image: np.ndarray, analysis: dict) -> np.ndarray:
+    """Draw geometric shapes based on AI analysis"""
+    h, w = image.shape[:2]
+    canvas = np.ones((h, w, 3), dtype=np.uint8) * 255
+    
+    # Find contours to identify major shapes
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    composition = cv2.Canny(gray, 100, 200)
-    composition = cv2.dilate(composition, np.ones((2, 2), np.uint8), iterations=1)
+    blurred = cv2.GaussianBlur(gray, (11, 11), 0)
+    edges = cv2.Canny(blurred, 30, 100)
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
-    # Step 2: Basic shapes
-    shapes = create_basic_shapes_overlay(image)
+    # Sort contours by area and get the largest ones
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)[:5]
     
-    # Step 3: Detailed outlines
-    detailed = process_image_edges(image)
+    for contour in contours:
+        # Approximate the contour to basic shapes
+        epsilon = 0.04 * cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, epsilon, True)
+        
+        # Draw based on number of vertices
+        if len(approx) == 3:
+            # Triangle
+            cv2.polylines(canvas, [approx], True, (100, 100, 100), 3)
+        elif len(approx) == 4:
+            # Rectangle/Square
+            cv2.polylines(canvas, [approx], True, (100, 100, 100), 3)
+        else:
+            # Circle/Ellipse for more complex shapes
+            (x, y), radius = cv2.minEnclosingCircle(contour)
+            if radius > 10:
+                cv2.circle(canvas, (int(x), int(y)), int(radius), (100, 100, 100), 3)
     
-    # Step 4: Mid-tone details
-    bilateral = cv2.bilateralFilter(gray, 9, 75, 75)
-    mid_tones = cv2.Canny(bilateral, 50, 150)
+    # Add centerlines for composition
+    cv2.line(canvas, (w//2, 0), (w//2, h), (200, 200, 200), 1, cv2.LINE_AA)
+    cv2.line(canvas, (0, h//2), (w, h//2), (200, 200, 200), 1, cv2.LINE_AA)
     
-    # Step 5: Final details
-    fine_details = cv2.Canny(gray, 30, 100)
+    return canvas
+
+def create_progressive_sketches(image: np.ndarray, analysis: dict) -> dict:
+    """Generate progressive sketch versions based on AI analysis"""
+    h, w = image.shape[:2]
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    # Step 1: Composition guidelines with basic shapes
+    step1 = draw_geometric_shapes(image, analysis)
+    
+    # Step 2: Major shapes with proportions
+    step2 = np.ones((h, w, 3), dtype=np.uint8) * 255
+    blurred = cv2.GaussianBlur(gray, (7, 7), 0)
+    edges = cv2.Canny(blurred, 50, 150)
+    # Simplify edges
+    kernel = np.ones((3, 3), np.uint8)
+    simplified = cv2.dilate(edges, kernel, iterations=2)
+    simplified = cv2.erode(simplified, kernel, iterations=2)
+    step2[simplified > 0] = [100, 100, 100]
+    
+    # Step 3: Refined outlines
+    step3 = np.ones((h, w, 3), dtype=np.uint8) * 255
+    edges = cv2.Canny(gray, 40, 120)
+    contours, _ = cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    cv2.drawContours(step3, contours, -1, (80, 80, 80), 2)
+    
+    # Step 4: Add mid-tones and texture hints
+    step4 = np.ones((h, w, 3), dtype=np.uint8) * 255
+    # Copy step 3
+    step4 = step3.copy()
+    # Add lighter edges for texture
+    fine_edges = cv2.Canny(gray, 20, 80)
+    step4[fine_edges > 0] = [150, 150, 150]
+    
+    # Step 5: Detailed sketch with shading zones
+    step5 = np.ones((h, w, 3), dtype=np.uint8) * 255
+    # Create shading map
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    enhanced = clahe.apply(gray)
+    edges_detailed = cv2.Canny(enhanced, 30, 100)
+    
+    # Add hatching for darker areas
+    for i in range(0, h, 10):
+        for j in range(0, w, 10):
+            if gray[i, j] < 100:
+                cv2.line(step5, (j, i), (j+5, i+5), (180, 180, 180), 1)
+    
+    step5[edges_detailed > 0] = [60, 60, 60]
     
     return {
-        "step_1_composition": encode_image_to_base64(composition),
-        "step_2_basic_shapes": encode_image_to_base64(shapes),
-        "step_3_outlines": encode_image_to_base64(detailed),
-        "step_4_midtones": encode_image_to_base64(mid_tones),
-        "step_5_details": encode_image_to_base64(fine_details)
+        "step_1_composition": encode_image_to_base64(step1),
+        "step_2_basic_shapes": encode_image_to_base64(step2),
+        "step_3_outlines": encode_image_to_base64(step3),
+        "step_4_midtones": encode_image_to_base64(step4),
+        "step_5_details": encode_image_to_base64(step5)
     }
 
 async def analyze_image_with_claude(image_base64: str) -> SketchingGuide:
@@ -208,11 +274,11 @@ async def analyze_sketch(file: UploadFile = File(...)):
         # Encode original image
         original_base64 = encode_image_to_base64(image)
         
-        # Generate progressive sketch versions
-        processed_images = create_progressive_sketches(image)
-        
-        # Analyze with Claude Vision
+        # Analyze with Claude Vision first
         analysis = await analyze_image_with_claude(original_base64)
+        
+        # Generate progressive sketch versions based on analysis
+        processed_images = create_progressive_sketches(image, analysis)
         
         # Construct response
         guide = SketchingGuide(

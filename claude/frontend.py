@@ -206,16 +206,25 @@ if 'tutorial' in st.session_state:
             
             with col2:
                 st.markdown("#### 🖼️ Reference Image")
-                # Display corresponding processed image
-                image_key = f"step_{step['step_number']}_" + [
-                    "composition", "basic_shapes", "outlines", "midtones", "details"
-                ][idx]
-                
-                if image_key in tutorial['processed_images']:
+                # Display the image that matches this step's description
+                if 'step_image' in step:
                     display_base64_image(
-                        tutorial['processed_images'][image_key],
+                        step['step_image'],
                         f"Step {step['step_number']} Reference"
                     )
+                else:
+                    # Fallback: try to find image by step number
+                    image_key = f"step_{step['step_number']}_" + [
+                        "composition", "basic_shapes", "outlines", "midtones", "details"
+                    ][step['step_number'] - 1] if step['step_number'] <= 5 else None
+                    
+                    if image_key and image_key in tutorial.get('processed_images', {}):
+                        display_base64_image(
+                            tutorial['processed_images'][image_key],
+                            f"Step {step['step_number']} Reference"
+                        )
+                    else:
+                        st.info("Reference image not available for this step.")
     
     # All reference images tab
     with tabs[-1]:
@@ -254,6 +263,6 @@ if 'tutorial' in st.session_state:
 st.markdown("---")
 st.markdown("""
     <div style='text-align: center; color: #888;'>
-        <p>Made with ❤️ </p>
+        <p> ❤️ </p>
     </div>
 """, unsafe_allow_html=True)
