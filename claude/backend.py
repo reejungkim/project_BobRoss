@@ -47,7 +47,6 @@ class DrawingStep(BaseModel):
     instructions: str
     key_shapes: List[str]
     focus_areas: List[str]
-    step_image: str  # Base64 encoded image matching this step's description
 
 class SketchingGuide(BaseModel):
     original_image: str
