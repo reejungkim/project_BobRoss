@@ -46,8 +46,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Backend API URL
-API_URL = "http://localhost:8000"
+# # Backend API URL
+# API_URL = "http://localhost:8000"
+
+# To your Render URL:
+API_URL = "https://sketch-tutor-backend.onrender.com"
 
 def call_api(image_bytes):
     """Call the FastAPI backend"""
