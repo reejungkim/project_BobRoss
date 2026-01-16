@@ -15,3 +15,6 @@ numpy>=1.24.0,<2.0.0
 # Streamlit Frontend
 streamlit>=1.30.0
 requests>=2.31.0
+
+opencv-python-headless>=4.8.0
+python-dotenv
