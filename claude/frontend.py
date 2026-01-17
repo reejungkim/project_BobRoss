@@ -50,7 +50,7 @@ st.markdown("""
 # API_URL = "http://localhost:8000"
 
 # To your Render URL:
-API_URL = "https://sketch-tutor-backend.onrender.com"
+API_URL = "https://https://project-bobross.onrender.com"
 
 def call_api(image_bytes):
     """Call the FastAPI backend"""
