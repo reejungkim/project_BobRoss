@@ -111,20 +111,44 @@ with st.sidebar:
     """)
 
 # Main content
-uploaded_file = st.file_uploader(
-    "Upload an image to get started",
-    type=["jpg", "jpeg", "png"],
-    help="Choose a photo you'd like to learn to draw"
-)
+# Create tabs for upload methods
+tab1, tab2 = st.tabs(["📁 Upload Image", "📸 Take Photo"])
 
-if uploaded_file is not None:
+image = None
+image_source = None
+
+with tab1:
+    uploaded_file = st.file_uploader(
+        "Upload an image to get started",
+        type=["jpg", "jpeg", "png"],
+        help="Choose a photo you'd like to learn to draw",
+        key="file_upload"
+    )
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        image_source = "upload"
+
+with tab2:
+    camera_photo = st.camera_input(
+        "Take a photo",
+        help="Use your device camera to capture something you want to draw",
+        key="camera_input"
+    )
+    if camera_photo is not None:
+        image = Image.open(camera_photo)
+        image_source = "camera"
+
+if image is not None:
     # Display original image
     col1, col2 = st.columns([1, 1])
     
     with col1:
         st.subheader("📸 Original Image")
-        image = Image.open(uploaded_file)
         st.image(image, use_column_width=True)
+        if image_source == "camera":
+            st.caption("✅ Photo captured from camera")
+        else:
+            st.caption("✅ Photo uploaded from file")
     
     with col2:
         st.subheader("🔍 Quick Preview")
