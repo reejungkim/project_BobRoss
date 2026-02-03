@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI 도형 분석</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;family=Noto+Sans+KR:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2bcdee",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#101f22",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "Noto Sans KR", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#0d191b] dark:text-white transition-colors duration-300">
+<div class="relative flex min-h-screen w-full flex-col max-w-[480px] mx-auto overflow-x-hidden shadow-2xl bg-background-light dark:bg-background-dark">
+<!-- TopAppBar -->
+<header class="flex items-center p-4 pb-2 justify-between sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="text-[#0d191b] dark:text-white flex size-12 shrink-0 items-center justify-start">
+<span class="material-symbols-outlined cursor-pointer">arrow_back_ios</span>
+</div>
+<h2 class="text-[#0d191b] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">AI 도형 분석</h2>
+</header>
+<!-- ProfileHeader (AI Bob Ross Guide) -->
+<div class="flex p-4 pb-2">
+<div class="flex w-full flex-col gap-4">
+<div class="flex gap-4 items-center">
+<div class="bg-primary/20 p-1 rounded-full border-2 border-primary">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-16 w-16" data-alt="Friendly AI artist avatar with fluffy hair and a paintbrush" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAY5Gi9OCgwuUKTvI2bdnMRoO0gFYU4zMlSK9ztZZNiFa_zil6qrSqG0sASqTEEH-U9vGoMaH_PV9GVeCNw5XiImZxBYGLUO9rMvHGPo9VBSMEqjW4HANW90zMkeKa2ZifxSQhwU5YdHa1Cs-MpEGrMfNlYFx6JlxUqZdan3vqCQk5A6hg9MxCdesHIrl1jL5RoqEqiwpnGv74vs0AZvvMZt1ibP7nuNXgvmXA43ZR5KCC67IB_w3L4rmhoXPx5V7z8sp3yDpF2aUeQ");'>
+</div>
+</div>
+<div class="flex flex-col flex-1">
+<div class="relative bg-white dark:bg-slate-800 p-3 rounded-xl rounded-tl-none shadow-sm border border-primary/10">
+<p class="text-[#0d191b] dark:text-white text-sm font-bold leading-tight mb-1">AI 선생님</p>
+<p class="text-[#4c8d9a] dark:text-primary/80 text-base font-medium leading-normal">
+                                우와, 정말 귀여운 강아지네요!<br/>간단한 도형으로 시작해볼까요?
+                            </p>
+<!-- Speech bubble tail -->
+<div class="absolute -left-2 top-0 w-0 h-0 border-t-[10px] border-t-white dark:border-t-slate-800 border-l-[10px] border-l-transparent"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ImageGrid (Comparison) -->
+<div class="grid grid-cols-1 gap-4 p-4">
+<div class="flex flex-col gap-2">
+<div class="relative w-full aspect-[4/3] bg-center bg-no-repeat bg-cover rounded-xl shadow-lg border-2 border-white dark:border-slate-700" data-alt="Original photo of a fluffy golden puppy sitting on grass" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA8homey2QJ1DmHa66B_QAv8q_wShlk94hfpT-lSNfleTW-jbMEMDzGg7mP9FTSapCXyfc_U5opICFjV_J-b0bu6OrnZtclxL-8EFrld8slVtlk4U1pl46dg9HScjiCpbfp1RvX6nAbN3QJt80ClK2tpyc84Qae83cOaguM8uXBgM0pRjQMhMS5YAKOMAfLeWdUSR_DyPk7ePcIuRsgnqxxHrJMgChraxopLIbe4AzUXZF1f5QWKcpxgtACnWial_pzdX_vN1GbvbYO");'>
+<div class="absolute top-3 left-3 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full">
+<span class="text-white text-xs font-bold">원본 사진</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<div class="relative w-full aspect-[4/3] bg-primary/10 rounded-xl border-2 border-dashed border-primary flex items-center justify-center overflow-hidden">
+<!-- Abstract Shape Breakdown Representation -->
+<div class="relative w-full h-full flex items-center justify-center">
+<svg class="w-2/3 h-2/3 text-primary opacity-80" fill="none" stroke="currentColor" stroke-width="4" viewbox="0 0 200 200">
+<!-- Head Circle -->
+<circle cx="100" cy="70" r="45"></circle>
+<!-- Body Circle -->
+<circle cx="100" cy="140" r="55"></circle>
+<!-- Ears Triangles -->
+<path d="M60 40 L40 80 L80 70 Z"></path>
+<path d="M140 40 L160 80 L120 70 Z"></path>
+<!-- Legs Rectangles -->
+<rect height="30" rx="4" width="15" x="70" y="160"></rect>
+<rect height="30" rx="4" width="15" x="115" y="160"></rect>
+</svg>
+</div>
+<div class="absolute top-3 left-3 bg-primary/80 backdrop-blur-md px-3 py-1 rounded-full">
+<span class="text-white text-xs font-bold">AI 도형 분석</span>
+</div>
+<div class="absolute bottom-3 right-3 flex gap-2">
+<div class="bg-white/90 dark:bg-slate-800/90 p-2 rounded-lg flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-primary text-sm">change_history</span>
+<span class="material-symbols-outlined text-primary text-sm">square</span>
+</div>
+</div>
+</div>
+<div class="px-1">
+<p class="text-[#0d191b] dark:text-white text-sm font-medium leading-normal italic">
+                        "원을 머리로, 삼각형을 귀로 생각하면 쉬워요!"
+                    </p>
+</div>
+</div>
+</div>
+<!-- ProgressBar -->
+<div class="mt-auto flex flex-col gap-3 p-4">
+<div class="flex gap-6 justify-between items-end">
+<div class="flex flex-col">
+<p class="text-[#4c8d9a] dark:text-primary/70 text-xs font-bold uppercase tracking-wider">Step 01</p>
+<p class="text-[#0d191b] dark:text-white text-lg font-bold leading-tight">도형 분석 완료</p>
+</div>
+<p class="text-[#0d191b] dark:text-white text-sm font-bold leading-normal bg-primary/20 px-3 py-1 rounded-full">1 / 3</p>
+</div>
+<div class="rounded-full bg-[#cfe3e7] dark:bg-slate-700 overflow-hidden h-3">
+<div class="h-full rounded-full bg-primary" style="width: 33%;"></div>
+</div>
+<p class="text-[#4c8d9a] dark:text-primary/60 text-sm font-normal leading-normal">사진을 그리기 쉬운 도형들로 나누었어요.</p>
+</div>
+<!-- ButtonGroup -->
+<div class="flex justify-stretch mb-6">
+<div class="flex flex-1 gap-3 flex-wrap px-4 py-3 justify-between">
+<button class="flex-1 flex min-w-[120px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-[#e7f1f3] dark:bg-slate-800 text-[#0d191b] dark:text-white text-base font-bold leading-normal tracking-[0.015em] transition-all hover:bg-gray-200 dark:hover:bg-slate-700">
+<span class="truncate">다시 찍기</span>
+</button>
+<button class="flex-[1.5] flex min-w-[160px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] shadow-[0_4px_14px_0_rgba(43,205,238,0.39)] transition-all hover:scale-[1.02] active:scale-[0.98]">
+<span class="truncate">따라 그리기 시작</span>
+<span class="material-symbols-outlined ml-2">edit</span>
+</button>
+</div>
+</div>
+<!-- iOS Safe Area Spacer -->
+<div class="h-8 bg-background-light dark:bg-background-dark"></div>
+</div>
+</body></html>

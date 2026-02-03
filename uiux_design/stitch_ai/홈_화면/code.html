@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>홈 화면 - AI Sketch Helper</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2bcdee",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#101f22",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "Noto Sans KR", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', 'Noto Sans KR', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d191b] dark:text-white transition-colors duration-300">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden max-w-[480px] mx-auto shadow-2xl bg-white dark:bg-[#101f22]">
+<!-- TopAppBar -->
+<header class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-50">
+<div class="flex size-12 shrink-0 items-center">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/30" data-alt="A profile picture of a smiling parent or child" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD9ofg9DS8fZWiT0cABFCFbnGNBLBXmLy6DGexF4l2jC-rqBYaYU9TQ6fQdJZ72LV6wJyF5FM9Foa_f_597LboTGDP8tXJrW1G4GfjWK_YtY00ANdcwxHueyDiZNzCFY9D3iTTsRG2BVKRStDbKDvrtDe90i8rYbIvWVct_dy7AQil5OScbcwevjgAehJnXlHrUmKqzWUrfFPaBELEGRBcMhoWQYv7o9MegRD8ojny1ZOXTlHqKGE0HdrABmq4Z6hMJySpiYdpL1lav");'>
+</div>
+</div>
+<h2 class="text-[#0d191b] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 ml-3">
+                반가워요! <br/>오늘은 무엇을 그릴까요?
+            </h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow-sm text-[#0d191b] dark:text-white">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</header>
+<main class="flex-1 pb-24">
+<!-- Hero CTA Card -->
+<div class="p-4 @container">
+<div class="flex flex-col items-stretch justify-start rounded-xl @xl:flex-row @xl:items-start shadow-lg bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-transparent border border-primary/20 overflow-hidden">
+<div class="w-full bg-center bg-no-repeat aspect-video bg-cover relative group" data-alt="A colorful illustration of a child drawing basic geometric shapes" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCTdpNvfpDh94ddjyX1TbXvdAhNbwoetqjJwQ1ITHybvKi_W9eLLCdB3fMncN3GwKFssWbqnQv5CASuHKKa-4gO9z85aJF5R6Nw_bQTpkx-A6TAyX3wjm_MRJC5cXpC4qMXreyYTjhjkaoc3OYbffoMqwbs1RKohMXImisHXxNbsibPfL8-gS3fBMPLGhwUBNj-lGalUHAyOR2hucCPZaoaHTUpWUWzV32xFnLLeUgAnvM45dOeTPlRBqY8Mb4_rMTx4XLPM_W1995e");'>
+<div class="absolute inset-0 bg-black/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-6xl opacity-80">draw</span>
+</div>
+</div>
+<div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-2 py-5 px-5">
+<p class="text-[#0d191b] dark:text-white text-xl font-bold leading-tight tracking-tight">그리기 시작하기</p>
+<div class="flex items-end gap-3 justify-between">
+<p class="text-[#4c8d9a] dark:text-primary/80 text-sm font-normal leading-normal">사진을 간단한 도형으로 바꿔보세요. <br/>아이와 함께라면 더 즐거워요!</p>
+<button class="flex min-w-[100px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-primary text-white shadow-md active:scale-95 transition-transform">
+<span class="truncate font-bold">시작하기</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- SectionHeader: Daily Inspiration -->
+<div class="flex items-center justify-between px-4 pt-6 pb-2">
+<h2 class="text-[#0d191b] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em]">오늘의 영감</h2>
+<button class="text-primary text-sm font-medium">전체보기</button>
+</div>
+<!-- Carousel: Daily Inspiration -->
+<div class="flex overflow-x-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
+<div class="flex items-stretch p-4 gap-4">
+<!-- Inspiration Item 1 -->
+<div class="flex h-full flex-1 flex-col gap-3 rounded-lg min-w-40 bg-white dark:bg-gray-800 p-2 shadow-sm border border-gray-100 dark:border-gray-700">
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg" data-alt="A cute yellow rubber duck made of basic circles" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuADgwCHpDpeyY3fX_dGwve0jeQExcax0YHjX_E1-JFkE02h2KCEkWrEWILhohrb9BIXjtGZZgpXaLQUrdfMoL_OsFpRekaIBDob68MxQzrIfQlN_CgAhGxKML1OzlyBTErgJ3OmbZNLJ1x5P8rdVfXveFONVF1STVjSYh9zZ9sHMEq8zj-QImQo3WQeoSMg1nM0DZO5opzf8QJ03YSYodr0thWrzjkEtZJQouClqwNsTplz_-noOmbUw5bvY9oez1Iod9RKEo-BknHw");'></div>
+<div class="px-1 pb-1">
+<p class="text-[#0d191b] dark:text-white text-base font-medium leading-normal">귀여운 오리</p>
+<p class="text-[#4c8d9a] dark:text-primary/70 text-xs font-normal leading-normal">원형 3개로 완성</p>
+</div>
+</div>
+<!-- Inspiration Item 2 -->
+<div class="flex h-full flex-1 flex-col gap-3 rounded-lg min-w-40 bg-white dark:bg-gray-800 p-2 shadow-sm border border-gray-100 dark:border-gray-700">
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg" data-alt="A simple green pine tree made of triangles" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC8CechYIOiVP7wr7woNT99Rm1m2S81sRer1i32fvBMB32qNYi7yhKMrWoUbZNAHjKUSRRwkdLdGUawA-AC6TLoDa4fy5crqeoY55wA9OjUgxYdVbDB5imzNGgF09e075nS5vNqK8vQBRlwKfP_beyZRgnJgfp6iMD9ExsngoaB-ODCxWYzBzf4Cf2IEedj8MkKmwFh9M7GEPjEL-y5GouRCsJVvNdmT9Rwj-naavQkyATUcjqson2U4xNECAFVenStMx_yqdNe_8BZ");'></div>
+<div class="px-1 pb-1">
+<p class="text-[#0d191b] dark:text-white text-base font-medium leading-normal">푸른 나무</p>
+<p class="text-[#4c8d9a] dark:text-primary/70 text-xs font-normal leading-normal">삼각형 2개로 완성</p>
+</div>
+</div>
+<!-- Inspiration Item 3 -->
+<div class="flex h-full flex-1 flex-col gap-3 rounded-lg min-w-40 bg-white dark:bg-gray-800 p-2 shadow-sm border border-gray-100 dark:border-gray-700">
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg" data-alt="A red toy car composed of rectangles and circles" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD59w4b1Jupow5l-4Sv-4DMq8fye0Ioi0eMlVG_Zw_xTZAp86w2stHKLX68n4j7PRXx61mK8UqXhpoiIGLlicZRh7Vf_3S8KrmEF_7qq4dOXOKbY9T0VF0cwttPrkBAxxK3jAfcdVm4r8JGVC639kqjXpYOc5u73FsemkXYeBi7UR4ONfh7eV0nA8yi1xaVzioUhkxoD8n0xb7XzkO8vIMx2yHUGsgtmukWG9WKn2TPiKv9yFpG4lpEFXX0rslmi3SevGCHKdoo-gKX");'></div>
+<div class="px-1 pb-1">
+<p class="text-[#0d191b] dark:text-white text-base font-medium leading-normal">부릉 자동차</p>
+<p class="text-[#4c8d9a] dark:text-primary/70 text-xs font-normal leading-normal">사각형으로 그리기</p>
+</div>
+</div>
+</div>
+</div>
+<!-- SectionHeader: Recent Sketches -->
+<div class="flex items-center justify-between px-4 pt-6 pb-2">
+<h2 class="text-[#0d191b] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em]">최근 스케치</h2>
+</div>
+<!-- Recent Sketches Grid -->
+<div class="grid grid-cols-2 gap-4 px-4">
+<div class="group flex flex-col gap-2">
+<div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 relative overflow-hidden" data-alt="A sketch of a family dog simplified into basic shapes" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCxRqmEgNzr3jAKAdHNlbdVBAT4dk9MdEqO4z44OFIk3POIfWKNz2fwgvTm1xedEi71RsnNE-tuXpYm02Y6O1BPhBxq67ioToBN91bF3TbiQfoaPBCB3OSnuIeK8oxn1tHvU_DNVvbMyAEX_0EuHd3a55CyQMKmglEus37c7xr9MQHjFu12GurFWbrVcEELOJk8IRI0rU4pJiyyp7qieo8Yqdm3MtKJb0n3Jl8-gLcgAKKut5YJZ9GCj3fCAR3sasRHiQc575OW8Uxm");'>
+<div class="absolute bottom-2 right-2 bg-white/80 dark:bg-black/50 px-2 py-1 rounded-full text-[10px] font-bold">어제</div>
+</div>
+<p class="text-sm font-medium px-1">우리집 멍멍이</p>
+</div>
+<div class="group flex flex-col gap-2">
+<div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 relative overflow-hidden" data-alt="A simple sketch of a house with a sun" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDX3llh5fHQjm26Sh4jAwyGRZv1wPlNY8tD2qqsW734VKDlIDViZDzd5JyHjfPTeK2-TeA0vizgCjr5HvlgLHbJk2YnLyzTzEDFlCA9-iSFYYGKpPN_FJmxFcNmUr7D2zRa4hs8iblqdGvmvSU3eDHkp6wYpY4atBMn7ScR2aDzigPtBC9LulVDsT4peTru66tsx8axneWjr0KAxDKCdLKgNgLzayhqqY9se-rORFH2M-BRQuoAAf4s8NNzXyObECbuc9NedmaiVLhc");'>
+<div class="absolute bottom-2 right-2 bg-white/80 dark:bg-black/50 px-2 py-1 rounded-full text-[10px] font-bold">3일 전</div>
+</div>
+<p class="text-sm font-medium px-1">동화속 우리집</p>
+</div>
+</div>
+</main>
+<!-- iOS Style Bottom Navigation -->
+<nav class="fixed bottom-0 w-full max-w-[480px] bg-white/90 dark:bg-[#101f22]/90 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800 flex justify-around items-center h-20 pb-4 px-6 z-50">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[28px] fill-[1]">home</span>
+<span class="text-[10px] font-bold">홈</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500">
+<span class="material-symbols-outlined text-[28px]">search</span>
+<span class="text-[10px] font-medium">탐색</span>
+</button>
+<div class="relative -top-6">
+<button class="size-14 bg-primary text-white rounded-full shadow-lg shadow-primary/40 flex items-center justify-center active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+<button class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500">
+<span class="material-symbols-outlined text-[28px]">palette</span>
+<span class="text-[10px] font-medium">내 갤러리</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500">
+<span class="material-symbols-outlined text-[28px]">settings</span>
+<span class="text-[10px] font-medium">설정</span>
+</button>
+</nav>
+</div>
+</body></html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2bcdee",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#101f22",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "Noto Sans KR", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Lexend', 'Noto Sans KR', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden">
+<!-- TopAppBar -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10">
+<div class="text-slate-800 dark:text-white flex size-12 shrink-0 items-center justify-start cursor-pointer">
+<span class="material-symbols-outlined text-3xl">arrow_back_ios_new</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-12">사진 업로드 및 촬영</h2>
+</div>
+<div class="flex flex-col flex-1 px-4">
+<!-- HeadlineText -->
+<div class="pt-6 pb-2">
+<h3 class="text-slate-900 dark:text-white tracking-tight text-2xl font-bold leading-tight text-center">사진을 찍거나 불러오세요</h3>
+</div>
+<!-- BodyText -->
+<div class="pb-6">
+<p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-normal text-center px-4">AI가 그림 그리기 쉬운 도형으로 나누어 줄게요!</p>
+</div>
+<!-- Images (Preview Area) -->
+<div class="relative w-full grow bg-background-light dark:bg-background-dark p-0 mb-6">
+<div class="w-full relative aspect-[3/4] rounded-xl overflow-hidden border-4 border-white dark:border-slate-800 shadow-xl bg-slate-200 dark:bg-slate-700">
+<div class="absolute inset-0 flex items-center justify-center opacity-40">
+<span class="material-symbols-outlined text-8xl text-slate-400 dark:text-slate-500">image</span>
+</div>
+<div class="w-full h-full bg-center bg-no-repeat bg-cover flex-1" data-alt="Cute simple drawing of a toy bear" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBEPApd_4AdYNdcDWrISGj9P64RwUc6Br3BuAvfSfhSDPnV-fM9e6XH5RIMws1VCbFmmA-XI80pYJ2Zdiu1k-nMZ9N6V-oiMPsfE7dof-xH_oQxXax4JwC8uWh_TwK-qv9TUxZ_rZiTGkOG8I4LFylIZpWtx5E7p5rkiKfmNjHUy_L27-CdJ34evrTQdiis2cZYanlqC1UmJY8fO1jAUkmJkq8GH-llgo1gFbKfDlLDspPJ35RXFp31jsg9sY_HK-mcSnGS_lD2EMjk");'></div>
+<!-- Scan Animation Line Overlay -->
+<div class="absolute top-1/4 left-0 w-full h-1 bg-primary/80 shadow-[0_0_15px_rgba(43,205,238,0.8)] z-10"></div>
+</div>
+</div>
+<!-- ProgressBar -->
+<div class="flex flex-col gap-3 pb-8">
+<div class="flex gap-6 justify-between items-center">
+<p class="text-slate-900 dark:text-white text-base font-medium leading-normal flex items-center gap-2">
+<span class="material-symbols-outlined text-primary animate-pulse">auto_fix_high</span>
+                        AI 분석 중...
+                    </p>
+<p class="text-primary text-sm font-bold">75%</p>
+</div>
+<div class="rounded-full bg-slate-200 dark:bg-slate-700 h-3 overflow-hidden">
+<div class="h-full rounded-full bg-primary" style="width: 75%;"></div>
+</div>
+</div>
+<!-- Action Buttons (Bottom Bar Layout) -->
+<div class="grid grid-cols-2 gap-4 pb-10">
+<button class="flex flex-col items-center justify-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 active:scale-95 transition-transform">
+<div class="size-12 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl">photo_camera</span>
+</div>
+<span class="text-slate-800 dark:text-slate-200 font-semibold">사진 찍기</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 active:scale-95 transition-transform">
+<div class="size-12 rounded-full bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl">gallery_thumbnail</span>
+</div>
+<span class="text-slate-800 dark:text-slate-200 font-semibold">갤러리 선택</span>
+</button>
+</div>
+</div>
+<!-- Primary Call to Action Sticky Footer -->
+<div class="p-4 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md sticky bottom-0">
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl text-lg shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
+                스케치 시작하기
+                <span class="material-symbols-outlined">draw</span>
+</button>
+</div>
+</div>
+</body></html>
